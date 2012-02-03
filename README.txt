@@ -2,6 +2,9 @@ Special Menu Items Module
 ------------------------
 Written by Tamir Al Zoubi and Karim Djelid - Servit Open Source Solutions - www.servit.ch
 
+NOTE: This is a FORK of the Drupal.org module created by Mike Potter @ Phase2 Technology
+The changes from Drupal.org are to support the <column> type used on FEMA.
+These changes will eventually be committed back to drupal.org once it's all working
 
 Description
 -----------

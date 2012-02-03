@@ -28,6 +28,12 @@ function special_menu_items_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['<column>'] = array(
+    'page callback' => 'drupal_not_found',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  
   $items['admin/config/system/special_menu_items'] = array(
     'title' => 'Special Menu Items',
     'description' => 'Configure Special Menu Items.',
@@ -48,7 +54,7 @@ function special_menu_items_menu() {
 
 function special_menu_items_menu_link(array $variables) {
   // Find special menu link
-  if (in_array($variables['element']['#href'], array('<nolink>', '<separator>'))) {
+  if (in_array($variables['element']['#href'], array('<nolink>', '<separator>', '<column>'))) {
     $element = $variables['element'];
     $sub_menu = '';
     
@@ -69,7 +75,13 @@ function special_menu_items_menu_link(array $variables) {
       case '<separator>':
         $output = variable_get('special_menu_items_separator_value', '<hr>');
         $element['#attributes']['class'][] = 'separator';
+        break;
 
+      case '<column>':
+        $tag = variable_get('special_menu_items_column_tag', '<span>');
+        $title = $element['#title'];
+        $output = special_menu_items_render_menu_item($tag, $title);
+        $element['#attributes']['class'][] = 'column';
         break;
     }
     
@@ -184,6 +196,7 @@ function special_menu_items_init() {
   }
   
   drupal_set_breadcrumb($breadcrumb);
+  drupal_add_css(drupal_get_path('module', 'special_menu_items') . '/special_menu_items.css');
 }
 
 /**
