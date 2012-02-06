@@ -34,6 +34,18 @@ function special_menu_items_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['<%>'] = array(
+    'page callback' => 'drupal_not_found',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['</%/>'] = array(
+    'page callback' => 'drupal_not_found',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  
   $items['admin/config/system/special_menu_items'] = array(
     'title' => 'Special Menu Items',
     'description' => 'Configure Special Menu Items.',
