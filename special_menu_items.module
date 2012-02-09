@@ -92,8 +92,12 @@ function special_menu_items_menu_link(array $variables) {
       case '<column>':
         $tag = variable_get('special_menu_items_column_tag', '<span>');
         $title = $element['#title'];
+        $title = ($title == '<none>') ? '' : $title;
         $output = special_menu_items_render_menu_item($tag, $title);
         $element['#attributes']['class'][] = 'column';
+        if (empty($title)) {
+          $element['#attributes']['class'][] = 'no-header';          
+        }
         break;
     }
     
