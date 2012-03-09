@@ -28,19 +28,13 @@ function special_menu_items_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['<current>'] = array(
+    'page callback' => 'drupal_not_found',
+    'access callback' => TRUE, 
+    'type' => MENU_CALLBACK,
+  );
+  
   $items['<column>'] = array(
-    'page callback' => 'drupal_not_found',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-  
-  $items['<%>'] = array(
-    'page callback' => 'drupal_not_found',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-  
-  $items['</%/>'] = array(
     'page callback' => 'drupal_not_found',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
@@ -66,7 +60,7 @@ function special_menu_items_menu() {
 
 function special_menu_items_menu_link(array $variables) {
   // Find special menu link
-  if (in_array($variables['element']['#href'], array('<nolink>', '<separator>', '<column>'))) {
+  if (in_array($variables['element']['#href'], array('<nolink>', '<separator>', '<current>', '<column>'))) {
     $element = $variables['element'];
     $sub_menu = '';
     
@@ -77,16 +71,25 @@ function special_menu_items_menu_link(array $variables) {
     switch ($element['#href']) {
       case '<nolink>':
         $tag = variable_get('special_menu_items_nolink_tag', '<span>');
-        $dest = drupal_get_destination();
-        $dest = (!empty($dest['destination'])) ? $dest['destination'] : '';
-        $title = l($element['#title'], $dest, $element['#localized_options']);
-        $output = special_menu_items_render_menu_item($tag, $title);
+        $title = strip_tags(l($element['#title'], $element['#href'], $element['#localized_options']));
+        $css = NULL;
+        // Set a class if the link is in the active trail.
+        if (!empty($element['#original_link']['in_active_trail'])) {
+          $css = 'active-trail';
+        }
+        $output = special_menu_items_render_menu_item($tag, $title, $css);
         $element['#attributes']['class'][] = 'nolink';
         break;
         
       case '<separator>':
         $output = variable_get('special_menu_items_separator_value', '<hr>');
         $element['#attributes']['class'][] = 'separator';
+        break;
+
+      case '<current>':
+        $dest = drupal_get_destination();
+        $dest = (!empty($dest['destination'])) ? $dest['destination'] : '';
+        $output = l($element['#title'], $dest, $element['#localized_options']);
         break;
 
       case '<column>':
