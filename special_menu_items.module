@@ -77,7 +77,11 @@ function special_menu_items_menu_link(array $variables) {
         if (!empty($element['#original_link']['in_active_trail'])) {
           $css = 'active-trail';
         }
-        $output = special_menu_items_render_menu_item($tag, $title, $css);
+        // add attributes for keyboard and screenreader accessibility
+        // this adds to the tag, NOT the parent <li>
+        $tagattr['tabindex'][] = '0';
+        $tagattr['role'][] = 'link';
+        $output = special_menu_items_render_menu_item($tag, $title, $css, $tagattr);
         $element['#attributes']['class'][] = 'nolink';
         break;
         
@@ -114,24 +118,30 @@ function special_menu_items_menu_link(array $variables) {
 /**
  * Returns menu item rendered.
  */
-function special_menu_items_render_menu_item($tag, $value, $css = NULL) {
+function special_menu_items_render_menu_item($tag, $value, $css = NULL, $tagattr = NULL) {
   $length = strlen($tag);
+
+  if ($tagattr != NULL) { // ready attributes if they exist
+      $tagattr = drupal_attributes($tagattr);
+  }
    
   //Validate the tags
   if ($tag[0] == '<' && $tag[$length - 1] == '>') {
     $closingtag = str_replace('<', '</', $tag);
     if ($css) {
-      $tag = str_replace('>', ' class="' . $css . '">', $tag);        
+      $tag = str_replace('>', ' class="' . $css . '"' . $tagattr . '>', $tag);
     } 
+    $tag = str_replace('>', $tagattr . '>', $tag);
   } else {
     if ($css) {       
-      $classtag = '<' . $tag . ' class="' . $css . '">';
+      $classtag = '<' . $tag . ' class="' . $css . '"' . $tagattr . '>';
       $tag = '<' . $tag . '>';
       $closingtag = str_replace('<', '</', $tag);
       $tag = $classtag;
     } else {
       $tag = '<' . $tag . '>';
       $closingtag = str_replace('<', '</', $tag);
+      $tag = '<' . $tag . $tagattr . '>';
     }
   }  
 
